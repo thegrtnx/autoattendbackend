@@ -19,4 +19,17 @@ export class StudentHelper {
 
     return student;
   }
+
+  //helper function to check qrid is valid
+  async checkIfQrIdIsValid(qrId: string) {
+    const student = await this.prisma.students.findUnique({
+      where: { qrId: qrId },
+    });
+
+    if (!student) {
+      throw new handleResponse(HttpStatus.NOT_FOUND, 'QR ID is not valid');
+    }
+
+    return student;
+  }
 }
