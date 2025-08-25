@@ -27,7 +27,7 @@ export class StudentsService {
   async createStudent(createStudentDto: CreateStudentDto) {
     //generate random unique qrid
     const qrId = uuidv4();
-    const qrpath = `https://${process.env.PLATFORM_NAME}/attend/${qrId}`;
+    const qrpath = `https://${process.env.PLATFORM_URL}/attend/${qrId}`;
 
     //create the qr code
     const qrCode = await this.qrService.createAndUploadQr(qrpath);
