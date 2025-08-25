@@ -23,6 +23,7 @@ model Students {
   lastname       String
   class          String
   dob            String
+  status         Status          @default(ACTIVE)
   gender         Gender
   picture        String?
   createdAt      DateTime        @default(now())
@@ -36,7 +37,7 @@ model Students {
 model StudentAddress {
   addressid String   @id @default(cuid())
   studentid String   @unique
-  student   Students @relation(fields: [studentid], references: [studentid])
+  student   Students @relation(fields: [studentid], references: [studentid], onDelete: Cascade)
   address   String
   longitude Float?
   latitude  Float?
@@ -49,17 +50,17 @@ model StudentAddress {
 }
 
 model StudentParent {
-  parentid       String   @id @default(cuid())
+  parentid       String     @id @default(cuid())
   studentid      String
-  student        Students @relation(fields: [studentid], references: [studentid])
+  student        Students   @relation(fields: [studentid], references: [studentid], onDelete: Cascade)
   parentname     String
   parentphoneSMS String
   parentphoneWA  String
   parentemail    String
   parentaddress  String?
-  parentrole     String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  parentrole     ParentRole
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
   @@index([parentid])
   @@index([studentid])
@@ -68,4 +69,16 @@ model StudentParent {
 enum Gender {
   MALE
   FEMALE
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum ParentRole {
+  FATHER
+  MOTHER
+  GUARDIAN
 }

@@ -83,6 +83,7 @@ async function bootstrap() {
     .addServer(`http://localhost:${port}`, 'Local')
     .addServer(`https://${productionUrl}`, 'Production')
     .addServer(`https://${stagingUrl}`, 'Staging')
+    .addTag('Students', 'Student Functions')
     .build();
 
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerOptions, {
