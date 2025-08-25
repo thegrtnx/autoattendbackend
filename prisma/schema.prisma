@@ -16,3 +16,56 @@ model User {
 
   @@index([userid])
 }
+
+model Students {
+  studentid      String          @id @default(cuid())
+  firstname      String
+  lastname       String
+  class          String
+  dob            String
+  gender         Gender
+  picture        String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  StudentAddress StudentAddress?
+  StudentParent  StudentParent[]
+
+  @@index([studentid])
+}
+
+model StudentAddress {
+  addressid String   @id @default(cuid())
+  studentid String   @unique
+  student   Students @relation(fields: [studentid], references: [studentid])
+  address   String
+  longitude Float?
+  latitude  Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([addressid])
+  @@index([studentid])
+  @@index([longitude, latitude])
+}
+
+model StudentParent {
+  parentid       String   @id @default(cuid())
+  studentid      String
+  student        Students @relation(fields: [studentid], references: [studentid])
+  parentname     String
+  parentphoneSMS String
+  parentphoneWA  String
+  parentemail    String
+  parentaddress  String?
+  parentrole     String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([parentid])
+  @@index([studentid])
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}

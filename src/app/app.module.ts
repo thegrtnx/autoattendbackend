@@ -10,6 +10,7 @@ import { CustomLoggerService } from 'src/lib/logger/logger.service';
 
 //library modules
 import { LibModule } from 'src/lib/lib.module';
+import { controlModule } from 'src/modules/control.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { LibModule } from 'src/lib/lib.module';
       isGlobal: true,
     }),
     LibModule,
+    controlModule,
   ],
   controllers: [AppController],
   providers: [AppService, CustomLoggerService],
