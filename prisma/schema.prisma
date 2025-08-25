@@ -25,6 +25,7 @@ model Students {
   dob            String
   status         Status          @default(ACTIVE)
   gender         Gender
+  qrId           String?         @unique
   qrUrl          String?
   qrPublicId     String?
   picture        String?

@@ -10,18 +10,35 @@ import {
 } from 'src/dto';
 import { PrismaService } from 'src/lib/prisma/prisma.service';
 import { handleResponse, StudentHelper } from 'src/utils';
+import { QrService } from 'src/lib/qrcodeGen/qr.service';
+import { CloudinaryService } from 'src/lib/cloudinary/cloudinary.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class StudentsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly studentHelper: StudentHelper,
+    private readonly qrService: QrService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   //create student
   async createStudent(createStudentDto: CreateStudentDto) {
+    //generate random unique qrid
+    const qrId = uuidv4();
+    const qrpath = `https://${process.env.PLATFORM_NAME}/attend/${qrId}`;
+
+    //create the qr code
+    const qrCode = await this.qrService.createAndUploadQr(qrpath);
+
     const student = await this.prisma.students.create({
-      data: createStudentDto,
+      data: {
+        ...createStudentDto,
+        qrId,
+        qrUrl: qrCode.url,
+        qrPublicId: qrCode.publicId,
+      },
     });
 
     return new handleResponse(
@@ -93,44 +110,68 @@ export class StudentsService {
 
   //delete student by id
   async deleteStudentById(id: string) {
-    await this.studentHelper.checkIfStudentExists(id);
+    const student = await this.studentHelper.checkIfStudentExists(id);
 
-    const student = await this.prisma.students.delete({
+    //delete the qr code from cloudinary
+    if (student.qrPublicId) {
+      await this.cloudinaryService.deleteMedia(student.qrPublicId);
+    }
+
+    const deletedStudent = await this.prisma.students.delete({
       where: { studentid: id },
     });
 
     return new handleResponse(
       HttpStatus.OK,
       'Student deleted successfully',
-      student,
+      deletedStudent,
     ).getResponse();
   }
 
   //delete bulk students
   async deleteBulkStudents(ids: string[]) {
-    const students = await this.prisma.students.deleteMany({
+    const students = await this.prisma.students.findMany({
       where: { studentid: { in: ids } },
     });
 
-    if (students.count === 0) {
+    //delete the qr code from cloudinary
+    for (const student of students) {
+      if (student.qrPublicId) {
+        await this.cloudinaryService.deleteMedia(student.qrPublicId);
+      }
+    }
+
+    const deletedStudents = await this.prisma.students.deleteMany({
+      where: { studentid: { in: ids } },
+    });
+
+    if (deletedStudents.count === 0) {
       throw new handleResponse(HttpStatus.NOT_FOUND, 'Students not found');
     }
 
     return new handleResponse(
       HttpStatus.OK,
       'Students deleted successfully',
-      students,
+      deletedStudents,
     ).getResponse();
   }
 
   //delete all students
   async deleteAllStudents() {
-    const students = await this.prisma.students.deleteMany();
+    //delete the qr code from cloudinary
+    const students = await this.prisma.students.findMany();
+    for (const student of students) {
+      if (student.qrPublicId) {
+        await this.cloudinaryService.deleteMedia(student.qrPublicId);
+      }
+    }
+
+    const deletedStudents = await this.prisma.students.deleteMany();
 
     return new handleResponse(
       HttpStatus.OK,
       'All students deleted successfully',
-      students,
+      deletedStudents,
     ).getResponse();
   }
 
