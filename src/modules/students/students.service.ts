@@ -9,7 +9,7 @@ import {
   UpdateStudentParentDto,
 } from 'src/dto';
 import { PrismaService } from 'src/lib/prisma/prisma.service';
-import { handleResponse, StudentHelper } from 'src/utils';
+import { handleResponse, HelpHelper } from 'src/utils';
 import { QrService } from 'src/lib/qrcodeGen/qr.service';
 import { CloudinaryService } from 'src/lib/cloudinary/cloudinary.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,7 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class StudentsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly studentHelper: StudentHelper,
+    private readonly helpHelper: HelpHelper,
     private readonly qrService: QrService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
@@ -83,7 +83,7 @@ export class StudentsService {
 
   //get student by id
   async getStudentById(id: string) {
-    const student = await this.studentHelper.checkIfStudentExists(id);
+    const student = await this.helpHelper.checkIfStudentExists(id);
 
     return new handleResponse(
       HttpStatus.OK,
@@ -94,7 +94,7 @@ export class StudentsService {
 
   //update student by id
   async updateStudentById(id: string, updateStudentDto: UpdateStudentDto) {
-    await this.studentHelper.checkIfStudentExists(id);
+    await this.helpHelper.checkIfStudentExists(id);
 
     const updatedStudent = await this.prisma.students.update({
       where: { studentid: id },
@@ -110,7 +110,7 @@ export class StudentsService {
 
   //delete student by id
   async deleteStudentById(id: string) {
-    const student = await this.studentHelper.checkIfStudentExists(id);
+    const student = await this.helpHelper.checkIfStudentExists(id);
 
     //delete the qr code from cloudinary
     if (student.qrPublicId) {
@@ -182,7 +182,7 @@ export class StudentsService {
     id: string,
     createStudentAddressDto: CreateStudentAddressDto,
   ) {
-    await this.studentHelper.checkIfStudentExists(id);
+    await this.helpHelper.checkIfStudentExists(id);
 
     const studentAddress = await this.prisma.studentAddress.create({
       data: {
@@ -203,7 +203,7 @@ export class StudentsService {
     id: string,
     updateStudentAddressDto: UpdateStudentAddressDto,
   ) {
-    await this.studentHelper.checkIfStudentExists(id);
+    await this.helpHelper.checkIfStudentExists(id);
 
     const studentAddress = await this.prisma.studentAddress.update({
       where: { addressid: id },
@@ -219,7 +219,7 @@ export class StudentsService {
 
   //delete student address by id
   async deleteStudentAddressById(id: string) {
-    await this.studentHelper.checkIfStudentExists(id);
+    await this.helpHelper.checkIfStudentExists(id);
 
     const studentAddress = await this.prisma.studentAddress.delete({
       where: { addressid: id },
@@ -239,7 +239,7 @@ export class StudentsService {
     id: string,
     createStudentParentDto: CreateStudentParentDto,
   ) {
-    await this.studentHelper.checkIfStudentExists(id);
+    await this.helpHelper.checkIfStudentExists(id);
 
     const studentParent = await this.prisma.studentParent.create({
       data: {
@@ -260,7 +260,7 @@ export class StudentsService {
     id: string,
     createStudentParentDto: CreateStudentParentDto[],
   ) {
-    await this.studentHelper.checkIfStudentExists(id);
+    await this.helpHelper.checkIfStudentExists(id);
 
     const studentParent = await this.prisma.studentParent.createMany({
       data: createStudentParentDto.map((dto) => ({
@@ -281,7 +281,7 @@ export class StudentsService {
     id: string,
     updateStudentParentDto: UpdateStudentParentDto,
   ) {
-    await this.studentHelper.checkIfStudentExists(id);
+    await this.helpHelper.checkIfStudentExists(id);
 
     const studentParent = await this.prisma.studentParent.update({
       where: { parentid: id },
@@ -297,7 +297,7 @@ export class StudentsService {
 
   //delete student parent by id
   async deleteStudentParentById(id: string) {
-    await this.studentHelper.checkIfStudentExists(id);
+    await this.helpHelper.checkIfStudentExists(id);
 
     const studentParent = await this.prisma.studentParent.delete({
       where: { parentid: id },

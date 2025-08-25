@@ -1,2 +1,2 @@
 export * from './utils';
-export * from './student.helper';
+export * from './help.helper';

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/lib/prisma/prisma.service';
-import { StudentHelper } from 'src/utils/helpers/student.helper';
+import { HelpHelper } from 'src/utils/helpers/help.helper';
 
 @Injectable()
 export class AttendanceService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly studentHelper: StudentHelper,
+    private readonly helpHelper: HelpHelper,
   ) {}
 
   async clockin(qrId: string) {
-    const student = await this.studentHelper.checkIfQrIdIsValid(qrId);
+    const student = await this.helpHelper.checkIfQrIdIsValid(qrId);
   }
 }
