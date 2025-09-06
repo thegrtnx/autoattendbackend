@@ -27,6 +27,11 @@ model User {
   isActive           Boolean              @default(false)
   otp                String?
   otpExpiredAt       DateTime?
+  resetOtp           String?
+  resetOtpExpiredAt  DateTime?
+  accountStatus      Status               @default(PENDING)
+  refreshToken       String?
+  role               Role                 @default(USER)
   TransactionHistory TransactionHistory[]
   Wallet             Wallet?
   WalletBalance      WalletBalance?

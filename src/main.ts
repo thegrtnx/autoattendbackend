@@ -80,6 +80,10 @@ async function bootstrap() {
     .setTitle(`${platform} API`)
     .setDescription(`API Documentation for ${platform}`)
     .setVersion('1.0.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'Bearer', bearerFormat: 'JWT' },
+      'Authorization',
+    )
     .addServer(`http://localhost:${port}`, 'Local')
     .addServer(`https://${productionUrl}`, 'Production')
     .addServer(`https://${stagingUrl}`, 'Staging')

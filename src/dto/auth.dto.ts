@@ -87,6 +87,23 @@ export class SignInDto {
 
 export class ResetPasswordDto {
   @ApiProperty({
+    description: 'User email',
+    example: 'john.doe@example.com',
+  })
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({
+    description: 'OTP of the user',
+    example: '123456',
+    required: true,
+  })
+  @IsNotEmpty()
+  @IsString()
+  resetOtp: string;
+
+  @ApiProperty({
     description: 'User password',
     example: 'password',
   })
@@ -199,4 +216,44 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   companyName?: string;
+}
+
+export class ForgotPasswordDto {
+  @ApiProperty({
+    description: 'User email address',
+    example: 'user@example.com',
+  })
+  @IsEmail({}, { message: 'Please provide a valid email address' })
+  @IsNotEmpty({ message: 'Email is required' })
+  email: string;
+}
+
+export class RefreshTokenDto {
+  @ApiProperty({
+    description: 'Refresh token to generate new access token',
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  })
+  @IsString({ message: 'Refresh token must be a string' })
+  @IsNotEmpty({ message: 'Refresh token is required' })
+  refreshToken: string;
+}
+
+export class VerifyOtpDto {
+  @ApiProperty({
+    description: 'Email address of the user',
+    example: 'john.doe@example.com',
+    required: true,
+  })
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({
+    description: 'OTP of the user',
+    example: '123456',
+    required: true,
+  })
+  @IsNotEmpty()
+  @IsString()
+  otp: string;
 }
